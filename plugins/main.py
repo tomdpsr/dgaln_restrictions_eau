@@ -15,11 +15,6 @@ def extract():
         "dest_path": f"/opt/airflow/data/",
         "dest_name": "arrete.csv",
     },
-    {
-        "url": "https://www.data.gouv.fr/fr/datasets/r/bbae8ea2-4d53-4f96-b7eb-9c08f66a07c5",
-        "dest_path": f"/opt/airflow/data/",
-        "dest_name": "departement.csv",
-    }
     ])
 
 
