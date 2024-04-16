@@ -4,7 +4,7 @@ import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 
-from main import extract, load
+from main import extract, load, transform
 
 
 with DAG(
@@ -20,9 +20,14 @@ with DAG(
         python_callable=extract,
     )
 
+    transform_task = PythonOperator(
+        task_id="transform",
+        python_callable=transform,
+    )
+
     load_task = PythonOperator(
         task_id="load",
         python_callable=load,
     )
 
-    extract_task >> load_task
+    extract_task >> transform_task >> load_task

@@ -1,5 +1,7 @@
-from plugins.helpers.files import download_files
-from plugins.helpers.postgres import load_file_in_db, execute_sql_file, Postgres_Credentials
+import pandas as pd
+
+from helpers.files import download_files
+from helpers.postgres import load_file_in_db, execute_sql_file, Postgres_Credentials
 
 
 def extract():
@@ -20,6 +22,40 @@ def extract():
     }
     ])
 
+
+def transform_analytics_arrete(df_arretes: pd.DataFrame) -> pd.DataFrame:
+    df_analytics_arrete = df_arretes[
+        ['numero_arrete', 'date_signature', 'debut_validite_arrete', 'fin_validite_arrete']].drop_duplicates()
+    df_analytics_arrete['duree_jours'] = (pd.to_datetime(df_analytics_arrete['fin_validite_arrete'], errors='coerce') - pd.to_datetime(
+        df_analytics_arrete['debut_validite_arrete'], errors='coerce')).dt.days + 1
+    return df_analytics_arrete
+
+def transform_analytics_niveau(df_arretes: pd.DataFrame, df_zone_alerte: pd.DataFrame) -> pd.DataFrame:
+    df_analytics_niveau = df_arretes[['id_zone', 'debut_validite_arrete', 'fin_validite_arrete', 'numero_niveau']]
+    df_analytics_niveau['fin_validite_arrete'] = pd.to_datetime(df_analytics_niveau['fin_validite_arrete'], errors='coerce')
+    df_analytics_niveau['debut_validite_arrete'] = pd.to_datetime(df_analytics_niveau['debut_validite_arrete'], errors='coerce')
+    df_analytics_niveau = df_analytics_niveau.dropna(subset=['fin_validite_arrete', 'fin_validite_arrete'])
+
+    # Duplication des intervalles par jour
+    df_analytics_niveau['date_jour'] = df_analytics_niveau[['debut_validite_arrete', 'fin_validite_arrete']].apply(
+        lambda x: pd.date_range(x['debut_validite_arrete'], x['fin_validite_arrete']), axis=1)
+
+    df_analytics_niveau = df_analytics_niveau.explode('date_jour').drop(['debut_validite_arrete', 'fin_validite_arrete'], axis=1)
+    df_analytics_niveau = df_analytics_niveau.merge(df_zone_alerte, on='id_zone', how='inner').drop(['id_zone'], axis=1)
+    df_analytics_niveau = df_analytics_niveau[
+        ['code_iso_departement', 'date_jour', 'numero_niveau', 'surface_zone', 'type_zone']].reset_index(drop=True)
+    return df_analytics_niveau
+
+
+def transform():
+    df_arretes = pd.read_csv('/opt/airflow/data/arrete.csv', dtype=object)
+    df_zone_alerte = pd.read_csv('/opt/airflow/data/zone_alerte.csv', dtype=object)
+
+    df_analytics_arrete = transform_analytics_arrete(df_arretes)
+    df_analytics_niveau = transform_analytics_niveau(df_arretes, df_zone_alerte)
+
+    df_analytics_arrete.to_csv('/opt/airflow/data/analytics_arrete.csv', index=False)
+    df_analytics_niveau.to_csv('/opt/airflow/data/analytics_niveau.csv', index=False)
 
 
 def load():

@@ -1,13 +1,12 @@
 import os
-from typing import List, Optional
+from typing import List
 
 
 import requests
-from urllib3.util import Url
 
 
 def download_files(
-    list_urls: List[Url],
+    list_urls: List[dict],
 ):
     for url in list_urls:
         with requests.get(
