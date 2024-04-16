@@ -1,0 +1,3 @@
+id_zone,code_zone,type_zone,nom_zone,surface_zone,numero_version,est_version_actuelle,code_departement,code_iso_departement,nom_departement,surface_departement,nom_bassin_versant
+zone_1,code_1,SOU,Zone 1,10.05,2,False,01,FR-01,Ain,5784.74,Rhone-Mediterranee-Corse
+zone_2,code_2,SUP,Zone 2,10.05,2,False,01,FR-01,Ain,5784.74,Rhone-Mediterranee-Corse

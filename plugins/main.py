@@ -20,15 +20,17 @@ def extract():
 
 def transform_analytics_arrete(df_arretes: pd.DataFrame) -> pd.DataFrame:
     df_analytics_arrete = df_arretes[
-        ['numero_arrete', 'date_signature', 'debut_validite_arrete', 'fin_validite_arrete']].drop_duplicates()
+        ['numero_arrete', 'date_signature', 'debut_validite_arrete', 'fin_validite_arrete', 'numero_niveau']].drop_duplicates()
     df_analytics_arrete['duree_jours'] = (pd.to_datetime(df_analytics_arrete['fin_validite_arrete'], errors='coerce') - pd.to_datetime(
         df_analytics_arrete['debut_validite_arrete'], errors='coerce')).dt.days + 1
+    df_analytics_arrete = df_analytics_arrete[df_analytics_arrete['duree_jours'] > 0]
     return df_analytics_arrete
 
 def transform_analytics_niveau(df_arretes: pd.DataFrame, df_zone_alerte: pd.DataFrame) -> pd.DataFrame:
     df_analytics_niveau = df_arretes[['id_zone', 'debut_validite_arrete', 'fin_validite_arrete', 'numero_niveau']]
     df_analytics_niveau['fin_validite_arrete'] = pd.to_datetime(df_analytics_niveau['fin_validite_arrete'], errors='coerce')
     df_analytics_niveau['debut_validite_arrete'] = pd.to_datetime(df_analytics_niveau['debut_validite_arrete'], errors='coerce')
+    df_analytics_niveau = df_analytics_niveau[df_analytics_niveau['debut_validite_arrete']<=df_analytics_niveau['fin_validite_arrete']]
     df_analytics_niveau = df_analytics_niveau.dropna(subset=['fin_validite_arrete', 'fin_validite_arrete'])
 
     # Duplication des intervalles par jour

@@ -10,6 +10,8 @@ from plugins.main import transform_analytics_arrete, transform_analytics_niveau
 
 class TestTransform(unittest.TestCase):
     def test_transform(self):
+        sys.path.append(f'{os.getcwd()}/plugins')
+
         df_arretes = pd.read_csv('data_input/arrete.csv', dtype=object)
         df_zone_alerte = pd.read_csv('data_input/zone_alerte.csv', dtype=object)
 

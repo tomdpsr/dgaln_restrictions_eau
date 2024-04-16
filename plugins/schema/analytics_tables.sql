@@ -6,6 +6,7 @@ CREATE TABLE analytics_arrete
     date_signature                date,
     debut_validite_arrete         date,
     fin_validite_arrete           date,
+    numero_niveau                 smallint,
     duree_jours                   float
 );
 
