@@ -1,4 +1,4 @@
-if [ -z "$INIT" ]
+if [ ! -z "$INIT" ]
 then
   echo "Initialisation airflow"
   docker compose up airflow-init

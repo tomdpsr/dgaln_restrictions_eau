@@ -7,12 +7,12 @@ from helpers.postgres import load_file_in_db, execute_sql_file, Postgres_Credent
 def extract():
     download_files([{
         "url": "https://www.data.gouv.fr/fr/datasets/r/ac45ed59-7f4b-453a-9b3d-3124af470056",
-        "dest_path": f"/opt/airflow/data/",
+        "dest_path": f"data/",
         "dest_name": "zone_alerte.csv",
     },
     {
         "url": "https://www.data.gouv.fr/fr/datasets/r/782aac32-29c8-4b66-b231-ab4c3005f574",
-        "dest_path": f"/opt/airflow/data/",
+        "dest_path": f"data/",
         "dest_name": "arrete.csv",
     },
     ])
@@ -43,14 +43,14 @@ def transform_analytics_niveau(df_arretes: pd.DataFrame, df_zone_alerte: pd.Data
 
 
 def transform():
-    df_arretes = pd.read_csv('/opt/airflow/data/arrete.csv', dtype=object)
-    df_zone_alerte = pd.read_csv('/opt/airflow/data/zone_alerte.csv', dtype=object)
+    df_arretes = pd.read_csv('data/arrete.csv', dtype=object)
+    df_zone_alerte = pd.read_csv('data/zone_alerte.csv', dtype=object)
 
     df_analytics_arrete = transform_analytics_arrete(df_arretes)
     df_analytics_niveau = transform_analytics_niveau(df_arretes, df_zone_alerte)
 
-    df_analytics_arrete.to_csv('/opt/airflow/data/analytics_arrete.csv', index=False)
-    df_analytics_niveau.to_csv('/opt/airflow/data/analytics_niveau.csv', index=False)
+    df_analytics_arrete.to_csv('data/analytics_arrete.csv', index=False)
+    df_analytics_niveau.to_csv('data/analytics_niveau.csv', index=False)
 
 
 def load():
@@ -62,15 +62,15 @@ def load():
         'pg_password': 'admin',
         'pg_schema': 'public'
     }
-    execute_sql_file(pg_credentials=pg_credentials, sql_file_path='/opt/airflow/plugins/schema/data_tables.sql')
-    execute_sql_file(pg_credentials=pg_credentials, sql_file_path='/opt/airflow/plugins/schema/analytics_tables.sql')
-    execute_sql_file(pg_credentials=pg_credentials, sql_file_path='/opt/airflow/plugins/schema/departement_geom.sql')
+    execute_sql_file(pg_credentials=pg_credentials, sql_file_path='plugins/schema/data_tables.sql')
+    execute_sql_file(pg_credentials=pg_credentials, sql_file_path='plugins/schema/analytics_tables.sql')
+    execute_sql_file(pg_credentials=pg_credentials, sql_file_path='plugins/schema/departement_geom.sql')
 
-    load_file_in_db(pg_credentials=pg_credentials,csv_file_path='/opt/airflow/data/zone_alerte.csv', table_name='zone_alerte')
-    load_file_in_db(pg_credentials=pg_credentials,csv_file_path='/opt/airflow/data/arrete.csv', table_name='arrete')
+    load_file_in_db(pg_credentials=pg_credentials, csv_file_path='data/zone_alerte.csv', table_name='zone_alerte')
+    load_file_in_db(pg_credentials=pg_credentials, csv_file_path='data/arrete.csv', table_name='arrete')
 
-    load_file_in_db(pg_credentials=pg_credentials,csv_file_path='/opt/airflow/data/analytics_arrete.csv', table_name='analytics_arrete')
-    load_file_in_db(pg_credentials=pg_credentials,csv_file_path='/opt/airflow/data/analytics_niveau.csv', table_name='analytics_niveau')
+    load_file_in_db(pg_credentials=pg_credentials, csv_file_path='data/analytics_arrete.csv', table_name='analytics_arrete')
+    load_file_in_db(pg_credentials=pg_credentials, csv_file_path='data/analytics_niveau.csv', table_name='analytics_niveau')
 
 
 
