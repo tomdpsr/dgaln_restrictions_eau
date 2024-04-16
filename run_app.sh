@@ -5,4 +5,4 @@ then
 fi
 docker compose up -d
 cd superset
-docker compose  -f ./docker-compose-image-tag.yml up -d
+docker compose  -f ./docker-compose.yml up -d
