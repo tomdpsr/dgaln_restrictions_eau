@@ -100,9 +100,7 @@ services:
     restart: always
 
   postgres-data:
-    build:
-      context: postgis
-      dockerfile: postgis.Dockerfile
+    image: postgres:13
     ports:
       - "5433:5432"
     environment:

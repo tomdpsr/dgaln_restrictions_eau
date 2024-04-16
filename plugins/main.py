@@ -66,7 +66,7 @@ def load():
     }
     execute_sql_file(pg_credentials=pg_credentials, sql_file_path='plugins/schema/data_tables.sql')
     execute_sql_file(pg_credentials=pg_credentials, sql_file_path='plugins/schema/analytics_tables.sql')
-    execute_sql_file(pg_credentials=pg_credentials, sql_file_path='plugins/schema/departement_geom.sql')
+    #execute_sql_file(pg_credentials=pg_credentials, sql_file_path='plugins/schema/departement_geom.sql')
 
     load_file_in_db(pg_credentials=pg_credentials, csv_file_path='data/zone_alerte.csv', table_name='zone_alerte')
     load_file_in_db(pg_credentials=pg_credentials, csv_file_path='data/arrete.csv', table_name='arrete')
